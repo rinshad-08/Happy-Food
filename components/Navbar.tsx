@@ -47,7 +47,7 @@ export default function Navbar() {
       transition: {
         delay: i * 0.1,
         duration: 0.5,
-        ease: [0.25, 1, 0.5, 1],
+        ease: [0.25, 1, 0.5, 1] as const,
       },
     }),
   };
@@ -58,16 +58,14 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ delay: 4.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out ${
-          isScrolled ? "py-4 px-4 sm:px-8" : "py-6 px-6 sm:px-12"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out ${isScrolled ? "py-4 px-4 sm:px-8" : "py-6 px-6 sm:px-12"
+          }`}
       >
         <div
-          className={`mx-auto flex items-center justify-between relative transition-all duration-500 ease-[0.16,1,0.3,1] ${
-            isScrolled
-              ? "max-w-5xl bg-white/70 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-full px-6 py-3"
-              : "max-w-7xl bg-transparent"
-          }`}
+          className={`mx-auto flex items-center justify-between relative transition-all duration-500 ease-[0.16,1,0.3,1] ${isScrolled
+            ? "max-w-5xl bg-white/70 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-full px-6 py-3"
+            : "max-w-7xl bg-transparent"
+            }`}
         >
           {/* Logo */}
           <Link href="/" className="relative z-50 flex-shrink-0 group">
@@ -136,7 +134,7 @@ export default function Navbar() {
                 <Icon size={18} />
               </motion.button>
             ))}
-            
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -144,7 +142,7 @@ export default function Navbar() {
             >
               <ShoppingCart size={16} />
               <span className="text-sm">Cart</span>
-              <motion.span 
+              <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 className="absolute -top-1 -right-1 w-5 h-5 bg-brand-green text-white text-[10px] rounded-full flex items-center justify-center shadow-sm"
@@ -162,7 +160,7 @@ export default function Navbar() {
                 2
               </span>
             </button>
-            
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="w-10 h-10 bg-brand-cream rounded-full flex flex-col justify-center items-center gap-[4px] relative overflow-hidden"
