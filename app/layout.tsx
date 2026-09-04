@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import SplashScreen from "../components/SplashScreen";
+import SmoothScroll from "../components/SmoothScroll";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,9 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable} antialiased scroll-smooth`}>
       <body className="min-h-screen flex flex-col font-sans bg-background text-foreground overflow-x-hidden">
-        <SplashScreen />
-        <Navbar />
-        {children}
+        <SmoothScroll>
+          <SplashScreen />
+          <Navbar />
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );
