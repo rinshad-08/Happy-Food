@@ -8,7 +8,7 @@ import * as THREE from "three";
 // ----------------------------------------------------------------------
 // 1. GLB Bottle Model
 // ----------------------------------------------------------------------
-const PrimitiveBottle = ({ color, radius, modelUrl }: { color: string; radius: number; modelUrl: string }) => {
+const PrimitiveBottle = ({ color, modelUrl, scaleMultiplier }: { color: string; modelUrl: string; scaleMultiplier: number }) => {
   const { scene } = useGLTF(modelUrl);
 
   const clonedScene = useMemo(() => scene.clone(), [scene]);
@@ -20,14 +20,20 @@ const PrimitiveBottle = ({ color, radius, modelUrl }: { color: string; radius: n
     });
   }, [clonedScene, color]);
 
-  let scale: [number, number, number] = [3.8, 4.2, 3.8]; 
+  let baseScale: [number, number, number] = [3.8, 4.2, 3.8];
 
   if (modelUrl.includes('Extra-Crunchy-Peanut-Butter')) {
-    scale = [5.3, 4.4, 5.3];
+    baseScale = [5.3, 4.4, 5.3];
   }
 
+  const scale: [number, number, number] = [
+    baseScale[0] * scaleMultiplier,
+    baseScale[1] * scaleMultiplier,
+    baseScale[2] * scaleMultiplier,
+  ];
+
   return (
-    <group position={[0, -0.5, 0]}> 
+    <group position={[0, -0.5, 0]}>
       <primitive object={clonedScene} scale={scale} />
     </group>
   );
@@ -43,22 +49,39 @@ interface RollingPhysicsProps {
   phase: "enter" | "exit";
   direction: number;
   isLoaded?: boolean;
+  skipEntrance?: boolean;
 }
 
-const RollingPhysics = ({ product, phase, direction, isLoaded = true }: RollingPhysicsProps) => {
+const RollingPhysics = ({ product, phase, direction, isLoaded = true, skipEntrance = false }: RollingPhysicsProps) => {
   const groupRef = useRef<THREE.Group>(null);
-  const { viewport } = useThree();
+  const { viewport, size } = useThree();
 
-  const radius = 1.2;
-  const height = 3.5;
-  const floorY = -1.2; 
+  // Continuous responsive factor (0 = narrow phone, 1 = desktop) instead of a hard
+  // mobile/desktop cutoff, so tablets and in-between widths scale smoothly too.
+  // Driven by the canvas's actual CSS pixel width (size.width) rather than the
+  // camera-derived viewport.width, which behaves unpredictably across aspect ratios.
+  const MIN_PX_WIDTH = 480;
+  const MAX_PX_WIDTH = 1024;
+  const responsiveT = THREE.MathUtils.clamp(
+    (size.width - MIN_PX_WIDTH) / (MAX_PX_WIDTH - MIN_PX_WIDTH),
+    0,
+    1
+  );
+  const scaleMultiplier = THREE.MathUtils.lerp(0.42, 1, responsiveT);
 
-  const isMobile = viewport.width < 10;
-  const targetCenterX = isMobile ? 0 : -viewport.width * 0.22;
-  const mobileYOffset = isMobile ? 2.5 : 0;
+  const radius = 1.2 * scaleMultiplier;
+  const height = 3.5 * scaleMultiplier;
+  const floorY = -1.2;
+
+  const targetCenterX = THREE.MathUtils.lerp(0, -viewport.width * 0.22, responsiveT);
+  const mobileYOffset = THREE.MathUtils.lerp(3.6, 0, responsiveT);
 
   const offscreenDistance = viewport.width * 0.8;
-  const startX = phase === "enter" ? targetCenterX + (direction > 0 ? offscreenDistance : -offscreenDistance) : targetCenterX;
+  const startX = skipEntrance
+    ? targetCenterX
+    : phase === "enter"
+      ? targetCenterX + (direction > 0 ? offscreenDistance : -offscreenDistance)
+      : targetCenterX;
 
   const positionX = useRef(startX);
   const velocity = useRef(0);
@@ -84,7 +107,7 @@ const RollingPhysics = ({ product, phase, direction, isLoaded = true }: RollingP
 
     positionX.current += velocity.current * dt;
 
-    const standUpDist = 5.5;
+    const standUpDist = 5.5 * scaleMultiplier;
     const distanceToCenter = Math.abs(positionX.current - targetCenterX);
 
     let pitch = Math.PI / 2; 
@@ -123,7 +146,7 @@ const RollingPhysics = ({ product, phase, direction, isLoaded = true }: RollingP
 
   return (
     <group ref={groupRef}>
-      <PrimitiveBottle color={product.color} radius={radius} modelUrl={product.modelUrl} />
+      <PrimitiveBottle color={product.color} modelUrl={product.modelUrl} scaleMultiplier={scaleMultiplier} />
     </group>
   );
 };
@@ -144,6 +167,15 @@ const RollingScene = ({ currentIndex, direction, activeProduct, isLoaded }: Roll
     previous: null as any,
     direction: direction,
   });
+
+  // The very first product should appear already in place rather than sliding in
+  // from offscreen — on slow devices the entrance spring can take several seconds
+  // to settle, which otherwise leaves the model looking stuck out of frame.
+  const hasMountedRef = useRef(false);
+  const isFirstMount = !hasMountedRef.current;
+  useEffect(() => {
+    hasMountedRef.current = true;
+  }, []);
 
   useEffect(() => {
     if (transitionState.current.id !== activeProduct.id) {
@@ -186,6 +218,7 @@ const RollingScene = ({ currentIndex, direction, activeProduct, isLoaded }: Roll
         direction={transitionState.direction}
         product={transitionState.current}
         isLoaded={isLoaded}
+        skipEntrance={isFirstMount}
       />
 
       {/* Floor Contact Shadow */}

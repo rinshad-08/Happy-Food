@@ -153,13 +153,13 @@ export default function BestsellersCarousel() {
         <RollingBottle3D currentIndex={currentIndex} direction={direction} activeProduct={activeProduct} />
       </div>
 
-      <div className="container mx-auto px-6 lg:px-12 relative z-10 w-full h-[700px] flex items-center perspective-[2000px]">
+      <div className="container mx-auto px-6 lg:px-8 relative z-10 w-full h-[700px] flex items-center perspective-[2000px]">
 
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
             key={currentIndex}
             custom={direction}
-            className="w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-20 h-full justify-center  absolute inset-0 will-change-transform"
+            className="w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-10 h-full justify-center lg:justify-start absolute inset-0 will-change-transform"
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={1}
@@ -172,7 +172,7 @@ export default function BestsellersCarousel() {
 
             {/* 3D Image Container Placeholder */}
             {/* Maintains layout for Flexbox while the actual 3D bottle is rendered via R3F in the background */}
-            <div className="w-full lg:w-[45%] h-[300px] lg:h-[500px] relative flex items-center justify-center pointer-events-none">
+            <div className="w-full lg:w-[42%] h-[380px] lg:h-[500px] relative flex items-center justify-center pointer-events-none">
               {/* Floating Price Sticker */}
               <motion.div
                 key={`price-${activeProduct.id}`}
@@ -195,7 +195,7 @@ export default function BestsellersCarousel() {
                     delay: 1.0
                   }
                 }}
-                className="absolute top-10 right-10 lg:top-16 lg:right-16 w-24 h-24 lg:w-32 lg:h-32 flex flex-col items-center justify-center z-20 pointer-events-auto will-change-transform"
+                className="absolute top-0 right-6 lg:top-16 lg:right-16 w-16 h-16 lg:w-24 lg:h-24 flex flex-col items-center justify-center z-20 pointer-events-auto will-change-transform"
               >
                 {/* Red Jagged SVG Background */}
                 <svg className="absolute inset-0 w-full h-full text-[#dc2626] drop-shadow-[0_10px_25px_rgba(220,38,38,0.5)]" viewBox="0 0 100 100" fill="currentColor">
@@ -204,8 +204,8 @@ export default function BestsellersCarousel() {
 
                 {/* Text Content */}
                 <div className="relative z-10 flex flex-col items-center justify-center text-white text-center transform -rotate-3 mt-1">
-                  <span className="text-[10px] lg:text-[12px] font-black leading-none tracking-widest drop-shadow-sm uppercase">ONLY</span>
-                  <span className="text-[22px] lg:text-[32px] font-black leading-none drop-shadow-sm my-0.5">{activeProduct.price}</span>
+                  <span className="text-[7px] lg:text-[9px] font-black leading-none tracking-widest drop-shadow-sm uppercase">ONLY</span>
+                  <span className="text-[15px] lg:text-[22px] font-black leading-none drop-shadow-sm my-0.5">{activeProduct.price}</span>
                 </div>
               </motion.div>
             </div>
