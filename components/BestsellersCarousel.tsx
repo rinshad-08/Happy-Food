@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, ShoppingCart, ArrowRight, Star } from "lucide-react";
+import { ShoppingCart, ArrowRight, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import AnimatedAddToCartButton from "./AnimatedAddToCartButton";
 import RollingBottle3D from "./RollingBottle3D";
 
 const products = [
@@ -278,10 +279,7 @@ export default function BestsellersCarousel() {
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
                 className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start"
               >
-                <button className={`w-full sm:w-auto px-8 py-4 rounded-full text-white font-bold text-lg flex items-center justify-center gap-3 transition-all hover:-translate-y-1 hover:shadow-[0_15px_30px_-5px_rgba(0,0,0,0.2)] active:scale-95 shadow-xl group ${activeProduct.bgAccent}`}>
-                  <ShoppingCart size={22} className="transition-transform group-hover:scale-110" />
-                  Add to Cart
-                </button>
+                <AnimatedAddToCartButton bgAccent={activeProduct.bgAccent} />
                 <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/70 backdrop-blur-md text-brand-charcoal font-bold text-lg flex items-center justify-center gap-2 transition-all hover:-translate-y-1 hover:bg-white hover:shadow-[0_15px_30px_-5px_rgba(0,0,0,0.1)] active:scale-95 group border border-white/50">
                   View Details
                   <ArrowRight size={20} className="transform transition-transform group-hover:translate-x-2" />

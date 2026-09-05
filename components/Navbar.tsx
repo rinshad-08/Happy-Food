@@ -4,10 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Search, User, ShoppingCart, ChevronDown } from "lucide-react";
+import { useCart } from "../lib/cart-context";
+import SearchOverlay from "./SearchOverlay";
 
 export default function Navbar() {
+  const { totalItems } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { scrollY } = useScroll();
 
@@ -34,9 +38,8 @@ export default function Navbar() {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Products", href: "/products" },
-    { name: "About Us", href: "#about" },
-    { name: "Our Story", href: "#story" },
-    { name: "Contact", href: "#contact" },
+    { name: "About Us", href: "/about" },
+    { name: "Contact", href: "/contact" },
   ];
 
   const staggerMenuItems = {
@@ -123,47 +126,52 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-2 relative z-50">
-            {[Search, User].map((Icon, i) => (
-              <motion.button
-                key={i}
-                whileHover={{ scale: 1.1, backgroundColor: "rgba(234, 88, 12, 0.1)" }}
-                whileTap={{ scale: 0.9 }}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-brand-charcoal transition-colors"
-                aria-label={i === 0 ? "Search" : "Account"}
-              >
-                <Icon size={18} />
-              </motion.button>
-            ))}
-
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="ml-2 px-5 py-2.5 bg-brand-charcoal text-white rounded-full font-semibold flex items-center gap-2 hover:bg-brand-orange transition-colors relative"
+              onClick={() => setSearchOpen(true)}
+              whileHover={{ scale: 1.1, backgroundColor: "rgba(234, 88, 12, 0.1)" }}
+              whileTap={{ scale: 0.9 }}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-brand-charcoal transition-colors cursor-pointer"
+              aria-label="Search"
             >
-              <ShoppingCart size={16} />
-              <span className="text-sm">Cart</span>
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 w-5 h-5 bg-brand-green text-white text-[10px] rounded-full flex items-center justify-center shadow-sm"
-              >
-                2
-              </motion.span>
+              <Search size={18} />
             </motion.button>
+
+            <Link href="/cart">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="ml-2 px-5 py-2.5 bg-brand-charcoal text-white rounded-full font-semibold flex items-center gap-2 hover:bg-brand-orange transition-colors relative cursor-pointer"
+              >
+                <ShoppingCart size={16} />
+                <span className="text-sm">Cart</span>
+                {totalItems > 0 && (
+                  <motion.span
+                    key={totalItems}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-brand-green text-white text-[10px] rounded-full flex items-center justify-center shadow-sm"
+                  >
+                    {totalItems}
+                  </motion.span>
+                )}
+              </motion.button>
+            </Link>
           </div>
 
           {/* Mobile Actions & Menu Toggle */}
           <div className="flex lg:hidden items-center gap-4 z-50">
-            <button className="text-brand-charcoal relative">
+            <Link href="/cart" className="text-brand-charcoal relative cursor-pointer">
               <ShoppingCart size={20} />
-              <span className="absolute -top-2 -right-2 bg-brand-orange text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                2
-              </span>
-            </button>
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-brand-orange text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="w-10 h-10 bg-brand-cream rounded-full flex flex-col justify-center items-center gap-[4px] relative overflow-hidden"
+              className="w-10 h-10 bg-brand-cream rounded-full flex flex-col justify-center items-center gap-[4px] relative overflow-hidden cursor-pointer"
               aria-label="Toggle Menu"
             >
               <motion.span
@@ -234,11 +242,17 @@ export default function Navbar() {
               transition={{ delay: 0.5 }}
               className="relative z-10 mt-auto pt-10 border-t border-white/10 flex gap-4"
             >
-              <button className="flex-1 py-4 bg-white/10 rounded-full text-white font-semibold flex items-center justify-center gap-2 hover:bg-white/20 transition-colors">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setSearchOpen(true);
+                }}
+                className="flex-1 py-4 bg-white/10 rounded-full text-white font-semibold flex items-center justify-center gap-2 hover:bg-white/20 transition-colors cursor-pointer"
+              >
                 <Search size={20} />
                 Search
               </button>
-              <button className="flex-1 py-4 bg-brand-orange rounded-full text-white font-semibold flex items-center justify-center gap-2 hover:bg-orange-500 transition-colors">
+              <button className="flex-1 py-4 bg-brand-orange rounded-full text-white font-semibold flex items-center justify-center gap-2 hover:bg-orange-500 transition-colors cursor-pointer">
                 <User size={20} />
                 Sign In
               </button>
@@ -246,6 +260,8 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

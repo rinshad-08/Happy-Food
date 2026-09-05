@@ -6,6 +6,9 @@ export const allProducts = [
     price: "₹199",
     unit: "per jar",
     image: "/images/Classic-Mixed-Fruit-Jam.png",
+    category: "Jam",
+    rating: 4.8,
+    reviews: 1204,
   },
   {
     id: 2,
@@ -14,6 +17,9 @@ export const allProducts = [
     price: "₹299",
     unit: "per jar",
     image: "/images/Extra-Crunchy-Peanut-Butter.png",
+    category: "Peanut Butter",
+    rating: 4.9,
+    reviews: 3512,
   },
   {
     id: 3,
@@ -22,6 +28,9 @@ export const allProducts = [
     price: "₹149",
     unit: "per jar",
     image: "/images/mango-pickle.png",
+    category: "Pickle",
+    rating: 4.7,
+    reviews: 892,
   },
   {
     id: 4,
@@ -30,6 +39,9 @@ export const allProducts = [
     price: "₹349",
     unit: "per jar",
     image: "/images/peanut-butter-choco.png",
+    category: "Peanut Butter",
+    rating: 4.9,
+    reviews: 4108,
   },
   {
     id: 5,
@@ -38,6 +50,9 @@ export const allProducts = [
     price: "₹399",
     unit: "combo pack",
     image: "/images/Mango,Lemon&Tender-Mango-Pickle-Combo.png",
+    category: "Combo Pack",
+    rating: 4.6,
+    reviews: 356,
   },
   {
     id: 6,
@@ -46,6 +61,9 @@ export const allProducts = [
     price: "₹599",
     unit: "combo pack",
     image: "/images/Peanut-Butter-Chocolate&Crunchy-Combo.png",
+    category: "Combo Pack",
+    rating: 4.8,
+    reviews: 641,
   },
   {
     id: 7,
@@ -54,6 +72,9 @@ export const allProducts = [
     price: "₹649",
     unit: "combo pack",
     image: "/images/Peanut-Butter-Two-Chocolate-Combo.png",
+    category: "Combo Pack",
+    rating: 4.7,
+    reviews: 289,
   },
   {
     id: 8,
@@ -62,5 +83,8 @@ export const allProducts = [
     price: "₹549",
     unit: "combo pack",
     image: "/images/Two-Peanut-Butter-No-Added-Sugar&Salt-Combo.png",
+    category: "Combo Pack",
+    rating: 4.8,
+    reviews: 417,
   }
 ];

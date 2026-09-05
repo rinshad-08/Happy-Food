@@ -1,30 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus, Heart, ArrowLeft } from "lucide-react";
+import { Heart, ArrowLeft, Eye, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { allProducts } from "../../lib/products";
+import ProductCardAddToCart from "../../components/ProductCardAddToCart";
+import { useCart } from "../../lib/cart-context";
+import SortDropdown from "../../components/SortDropdown";
+
+const CATEGORIES = ["All", "Jam", "Peanut Butter", "Pickle", "Combo Pack"];
+
+const SORT_OPTIONS = [
+  { value: "featured", label: "Featured" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+] as const;
+
+type SortValue = (typeof SORT_OPTIONS)[number]["value"];
+
+const parsePrice = (price: string) => Number(price.replace(/[^0-9.]/g, "")) || 0;
 
 export default function ProductsPage() {
-  const [cart, setCart] = useState<Record<number, number>>({});
+  const { addToCart } = useCart();
   const [wishlist, setWishlist] = useState<Record<number, boolean>>({});
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [sortBy, setSortBy] = useState<SortValue>("featured");
 
   const toggleWishlist = (id: number) => setWishlist((prev) => ({ ...prev, [id]: !prev[id] }));
-  const addToCart = (id: number) => setCart((prev) => ({ ...prev, [id]: 1 }));
-  const increment = (id: number) => setCart((prev) => ({ ...prev, [id]: prev[id] + 1 }));
-  const decrement = (id: number) => {
-    setCart((prev) => {
-      const newQty = prev[id] - 1;
-      if (newQty <= 0) {
-        const newCart = { ...prev };
-        delete newCart[id];
-        return newCart;
-      }
-      return { ...prev, [id]: newQty };
-    });
-  };
+
+  const visibleProducts = useMemo(() => {
+    const filtered =
+      activeCategory === "All"
+        ? allProducts
+        : allProducts.filter((product) => product.category === activeCategory);
+
+    if (sortBy === "price-asc") {
+      return [...filtered].sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+    }
+    if (sortBy === "price-desc") {
+      return [...filtered].sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+    }
+    return filtered;
+  }, [activeCategory, sortBy]);
 
   return (
     <main className="min-h-screen bg-[#f8faf9] pb-24 relative overflow-hidden">
@@ -68,12 +87,37 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        {/* Product Grid - Rendering ALL products */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {allProducts.map((product) => {
-            const quantity = cart[product.id] || 0;
-            const inCart = quantity > 0;
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors cursor-pointer ${
+                  activeCategory === category
+                    ? "bg-[#1a1a1a] text-white"
+                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
 
+          <SortDropdown options={SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
+        </div>
+
+        <p className="text-sm text-gray-500 font-medium mb-6">
+          Showing {visibleProducts.length} of {allProducts.length} products
+        </p>
+
+        {/* Product Grid */}
+        {visibleProducts.length === 0 ? (
+          <p className="text-center text-gray-500 py-24">No products found in this category.</p>
+        ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {visibleProducts.map((product) => {
             return (
               <div
                 key={product.id}
@@ -91,7 +135,7 @@ export default function ProductsPage() {
                   {/* Wishlist Button */}
                   <button
                     onClick={() => toggleWishlist(product.id)}
-                    className="absolute top-0 right-0 p-2.5 rounded-full bg-white/90 backdrop-blur shadow-sm border border-gray-100 text-gray-400 hover:text-red-500 hover:scale-110 active:scale-95 transition-all z-30"
+                    className="absolute top-0 right-0 p-2.5 rounded-full bg-white/90 backdrop-blur shadow-sm border border-gray-100 text-gray-400 hover:text-red-500 hover:scale-110 active:scale-95 transition-all z-30 cursor-pointer"
                     aria-label="Add to wishlist"
                   >
                     <Heart size={20} className={wishlist[product.id] ? "fill-red-500 text-red-500" : ""} />
@@ -103,9 +147,15 @@ export default function ProductsPage() {
                   {product.title}
                 </h3>
 
-                <p className="text-sm text-gray-500 font-medium mb-4">
+                <p className="text-sm text-gray-500 font-medium mb-2">
                   {product.subtitle}
                 </p>
+
+                <div className="flex items-center justify-center gap-1.5 mb-4">
+                  <Star size={14} className="fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm font-semibold text-gray-700">{product.rating}</span>
+                  <span className="text-xs text-gray-400">({product.reviews.toLocaleString("en-IN")})</span>
+                </div>
 
                 <div className="flex items-baseline gap-1 mb-6">
                   <span className="text-2xl font-bold text-gray-900">
@@ -116,52 +166,24 @@ export default function ProductsPage() {
                   </span>
                 </div>
 
-                {/* Add to Cart Button Logic */}
-                <div className="w-full mt-auto h-12 relative z-30">
-                  <AnimatePresence mode="wait">
-                    {!inCart ? (
-                      <motion.button
-                        key="add"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        onClick={() => addToCart(product.id)}
-                        className="w-full h-full rounded-full bg-[#1a1a1a] hover:bg-black text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-xl hover:scale-105"
-                      >
-                        <Plus size={18} />
-                        Add to Cart
-                      </motion.button>
-                    ) : (
-                      <motion.div
-                        key="controls"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-full h-full rounded-full bg-[#0a4d3c] text-white flex items-center justify-between px-2 shadow-md"
-                      >
-                        <button
-                          onClick={() => decrement(product.id)}
-                          className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/20 transition-colors"
-                        >
-                          <Minus size={16} />
-                        </button>
-                        <span className="font-semibold">{quantity}</span>
-                        <button
-                          onClick={() => increment(product.id)}
-                          className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center hover:bg-white/20 transition-colors"
-                        >
-                          <Plus size={16} />
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                {/* Add to Cart + View More Buttons */}
+                <div className="w-full mt-auto h-12 relative z-30 flex items-center gap-0 group-hover:gap-2 transition-all duration-300">
+                  <div className="flex-1 h-full min-w-0">
+                    <ProductCardAddToCart onAdd={() => addToCart(product.id)} />
+                  </div>
+                  <Link
+                    href={`/products/${product.id}`}
+                    className="h-full w-0 group-hover:w-12 overflow-hidden rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer"
+                    aria-label="View more"
+                  >
+                    <Eye size={18} className="shrink-0" />
+                  </Link>
                 </div>
               </div>
             );
           })}
         </div>
+        )}
       </div>
     </main>
   );

@@ -1,105 +1,112 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Plane, CreditCard, ShieldCheck } from "lucide-react";
+import { Leaf, Heart, Utensils, ArrowUpRight, ShieldCheck } from "lucide-react";
 
 const trustItems = [
   {
-    icon: Plane,
-    title: "India Wide Shipping",
-    subtitle: "Fast & reliable delivery anywhere in India. Carefully packaged to ensure freshness.",
-    gradient: "from-amber-400 to-orange-500",
-    shadow: "hover:shadow-orange-500/20",
-    iconBg: "bg-orange-50",
-    iconColor: "text-orange-500",
-    delay: 0.1,
+    number: "01",
+    icon: Leaf,
+    title: "Handpicked Freshness",
+    subtitle: "Sourced directly from local farms. Every jar is packed with 100% real fruits and roasted nuts for an unforgettable taste.",
   },
   {
-    icon: CreditCard,
-    title: "Easy Online Payment",
-    subtitle: "Seamless checkout using UPI, digital wallets, and all major credit/debit cards.",
-    gradient: "from-emerald-400 to-teal-500",
-    shadow: "hover:shadow-teal-500/20",
-    iconBg: "bg-teal-50",
-    iconColor: "text-teal-600",
-    delay: 0.2,
+    number: "02",
+    icon: Heart,
+    title: "Pure & Natural",
+    subtitle: "No artificial colors, flavors, or harmful chemicals. Just pure, wholesome ingredients you can confidently feed your family.",
   },
   {
-    icon: ShieldCheck,
-    title: "Secured Payments",
-    subtitle: "100% encrypted and safe transactions. Your privacy and security is our top priority.",
-    gradient: "from-rose-400 to-red-500",
-    shadow: "hover:shadow-red-500/20",
-    iconBg: "bg-red-50",
-    iconColor: "text-red-500",
-    delay: 0.3,
+    number: "03",
+    icon: Utensils,
+    title: "Crafted with Love",
+    subtitle: "Freshly crafted in small batches following our heritage recipes. We ensure every spoonful brings a smile to your face.",
   },
 ];
 
 export default function TrustStrip() {
   return (
-    <section className="w-full bg-[#FDFBF7] text-stone-800 py-32 relative overflow-hidden">
-      {/* Soft Organic Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none mix-blend-multiply" />
-      <div className="absolute -top-[20%] -left-[10%] w-[600px] h-[600px] bg-orange-200/40 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute -bottom-[20%] -right-[10%] w-[500px] h-[500px] bg-rose-200/40 rounded-full blur-[100px] pointer-events-none" />
+    <section className="w-full bg-[#FDFBF7] text-stone-900 py-24 lg:py-32 relative overflow-hidden">
+      {/* Subtle gradient wash */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-1/2 right-0 w-[600px] h-[600px] bg-brand-orange/5 rounded-full blur-[140px]" />
+        <div className="absolute -bottom-1/2 left-0 w-[600px] h-[600px] bg-brand-green/5 rounded-full blur-[140px]" />
+      </div>
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        
-        {/* Section Header */}
-        <div className="text-center mb-24">
-          <motion.h2 
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-20 lg:mb-24 pb-16 border-b border-stone-200">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="px-5 py-2 rounded-full bg-white border border-stone-200 shadow-sm mb-8 inline-flex items-center gap-2"
+          >
+            <ShieldCheck size={16} className="text-brand-orange" />
+            <span className="text-sm font-bold tracking-widest uppercase text-stone-600">Our Guarantee</span>
+          </motion.div>
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-display font-black text-4xl md:text-5xl lg:text-6xl text-stone-900 tracking-tight"
+            transition={{ duration: 0.6, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+            className="font-display font-black text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[1.05] text-stone-900 max-w-3xl"
           >
-            Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Happy?</span>
+            Why thousands choose{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-red-500">
+              Happy Food
+            </span>
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="mt-6 text-stone-600 text-lg md:text-xl font-medium max-w-2xl mx-auto"
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="text-stone-500 text-lg mt-6 max-w-md"
           >
-            Experience the finest quality jams and spreads with unmatched service, secure payments, and farm-fresh delivery.
+            Three simple promises behind every jar we make.
           </motion.p>
         </div>
 
-        {/* Feature Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        {/* Feature Rows */}
+        <div className="flex flex-col divide-y divide-stone-200">
           {trustItems.map((item, index) => {
             const Icon = item.icon;
             return (
-              <motion.div 
+              <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.7, delay: item.delay, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -10 }}
-                className={`flex flex-col items-center text-center group p-10 rounded-3xl bg-white border border-stone-200/60 relative overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 hover:border-stone-300 ${item.shadow} hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]`}
+                transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className="group grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-6 md:gap-12 py-10 lg:py-12"
               >
-                {/* Hover Gradient Glow inside card */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500`} />
+                {/* Number */}
+                <span className="font-display font-black text-6xl lg:text-7xl text-stone-200 group-hover:text-brand-orange/40 transition-colors duration-500 leading-none">
+                  {item.number}
+                </span>
 
-                {/* Icon Container */}
-                <div className="relative mb-8 mt-4">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-700 rounded-full`} />
-                  <div className={`relative z-10 w-20 h-20 rounded-full ${item.iconBg} flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-110 shadow-sm border border-black/5`}>
-                    <Icon size={32} className={`${item.iconColor} transition-transform duration-500 group-hover:scale-110`} strokeWidth={2} />
+                {/* Text */}
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <Icon size={20} className="text-brand-orange" strokeWidth={2} />
+                    <h4 className="font-display font-bold text-2xl lg:text-3xl tracking-tight text-stone-900">
+                      {item.title}
+                    </h4>
                   </div>
+                  <p className="text-stone-500 text-base lg:text-lg leading-relaxed max-w-2xl">
+                    {item.subtitle}
+                  </p>
                 </div>
 
-                <h4 className="font-display font-black text-2xl lg:text-3xl text-stone-900 mb-4 tracking-tight">
-                  {item.title}
-                </h4>
-                
-                <p className="text-stone-600 font-medium text-lg leading-relaxed group-hover:text-stone-800 transition-colors duration-300">
-                  {item.subtitle}
-                </p>
-                
+                {/* Arrow */}
+                <div className="hidden md:flex w-14 h-14 rounded-full border border-stone-200 items-center justify-center shrink-0 group-hover:border-brand-orange group-hover:bg-brand-orange transition-all duration-300 justify-self-end">
+                  <ArrowUpRight
+                    size={20}
+                    className="text-stone-400 group-hover:text-white transition-all duration-300 group-hover:rotate-45"
+                  />
+                </div>
               </motion.div>
             );
           })}

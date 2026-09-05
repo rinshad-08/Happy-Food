@@ -4,7 +4,9 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import SplashScreen from "../components/SplashScreen";
 import SmoothScroll from "../components/SmoothScroll";
-
+import Footer from "../components/Footer";
+import ToastProvider from "../components/ui/ToastProvider";
+import { CartProvider } from "../lib/cart-context";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -28,11 +30,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable} antialiased scroll-smooth`}>
       <body className="min-h-screen flex flex-col font-sans bg-background text-foreground overflow-x-hidden">
-        <SmoothScroll>
-          <SplashScreen />
-          <Navbar />
-          {children}
-        </SmoothScroll>
+        <CartProvider>
+          <SmoothScroll>
+            <SplashScreen />
+            <Navbar />
+            {children}
+            <Footer />
+            <ToastProvider />
+          </SmoothScroll>
+        </CartProvider>
       </body>
     </html>
   );

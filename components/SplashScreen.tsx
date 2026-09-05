@@ -39,15 +39,21 @@ export default function SplashScreen() {
     return () => clearInterval(interval);
   }, [show]);
 
-  // Generate some random floating particles
-  const particles = Array.from({ length: 8 }).map((_, i) => ({
-    id: i,
-    size: Math.random() * 20 + 10,
-    x: Math.random() * 100 - 50, // -50vw to 50vw
-    delay: Math.random() * 1.5,
-    duration: Math.random() * 2 + 3,
-    color: i % 2 === 0 ? "bg-brand-orange/40" : "bg-brand-green/40",
-  }));
+  const [particles, setParticles] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Generate some random floating particles only on the client
+    setParticles(
+      Array.from({ length: 8 }).map((_, i) => ({
+        id: i,
+        size: Math.random() * 20 + 10,
+        x: Math.random() * 100 - 50, // -50vw to 50vw
+        delay: Math.random() * 1.5,
+        duration: Math.random() * 2 + 3,
+        color: i % 2 === 0 ? "bg-brand-orange/40" : "bg-brand-green/40",
+      }))
+    );
+  }, []);
 
   return (
     <AnimatePresence>
