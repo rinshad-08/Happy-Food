@@ -15,12 +15,12 @@ export default function Footer() {
         staggerChildren: 0.1,
       },
     },
-  };
+  } as const;
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-  };
+  } as const;
 
   const HoverLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
     <Link href={href} className="group relative text-[#A3A3A3] hover:text-white transition-colors duration-300 inline-block">

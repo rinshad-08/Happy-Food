@@ -43,16 +43,16 @@ export default function CoreValues() {
         staggerChildren: 0.2
       }
     }
-  };
+  } as const;
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.6, ease: "easeOut" }
     }
-  };
+  } as const;
 
   return (
     <section className="py-24 md:py-32 bg-brand-cream relative z-20 overflow-hidden">
